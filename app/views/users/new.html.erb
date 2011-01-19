@@ -1,0 +1,16 @@
+<h3>Create A New Account</H3>
+
+<%= my_error_messages_for @user %>
+
+<%= form_for(:user, :url => users_path) do |f| %>
+
+	<p><%= f.label :tip_type, "Tip:"%> <%= f.select(:tip_type,User::TipTypes) %> <%= f.select :tip_id,Tip.find(:all).collect {|t| [ t.name, t.id ] }, { :include_blank => true } %></p>
+  <b><%= f.label :user_type, "Type:"%></b> <%= f.select(:user_type, titlize_for_select(current_user_can?(:admin) ? User::UserTypes : %w(midwife practice)), {},:onChange => 'check()') %> <br />
+  <b><%= f.label :user_name,"Account Name:"%></b> <%= f.text_field :user_name %><br />
+
+  <%= render(:partial => 'form', :object => f) %>
+
+  <p>
+    <%= submit_tag "Create account" %>
+  </p>
+<% end %>

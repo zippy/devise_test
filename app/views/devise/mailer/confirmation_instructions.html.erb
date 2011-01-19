@@ -1,0 +1,11 @@
+<%= @resource.first_name %>,
+
+<p>Welcome.
+
+<p>To begin using your account, you need to activate it and pick a password for yourself.  To do so, please click the link below.  You will then be on the Web site.  </p>
+
+<p>To enter the site in future, just go to https://example.com and type in your account name and password.</p>
+
+<p>Your account name is:  <%= @resource.user_name %></p>
+
+<p><%= link_to 'Activate my account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></p>

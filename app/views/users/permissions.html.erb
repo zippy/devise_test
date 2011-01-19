@@ -1,0 +1,19 @@
+Account Privileges for <%= @user.user_name %>:
+<p>
+          
+<%= form_tag(set_permissions_user_url(@user.id),:method => :put) do -%>
+
+ 	<%= [
+	['dev','Developer'],
+	['admin','Administrator'],
+
+	['accessAccounts','View/update accounts'],
+	['createAccounts','Create accounts (requires View/update accounts also)'],
+	['assignPrivs','Set privileges (requires Administrator or Create accounts also)'],
+	
+	].collect {|perm| id = "perms[#{perm[0]}]"; check_box_tag(id, value = 1, checked = @permissions.include?(perm[0])) << " " << label_tag(id,perm[1])}.join("<br />").html_safe
+	-%>
+	
+<br>
+<%= submit_tag "Set Privileges" %>
+<% end -%>

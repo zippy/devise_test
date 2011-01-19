@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>Devise Test APP</title>
+  <%= csrf_meta_tag %>
+</head>
+<body<% if @current_user && @current_user.has_preference('enlargeFont')%> class="enlargeFont"<%end%>>
+<div id="entire_page">
+
+<div id="page_content">
+<%if flash[:notice] %><div id='notice'><%=notice(flash[:notice],flash[:notice_param])%></div><%end%>
+  <%if flash[:alert] %><div id='alert'><%=flash[:alert]%></div><%end%>
+<%= yield  %>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<% @title = 'Reset Your Passowrd' %>
+
+Passwords are case-sensitive: uppercase and lowercase matter. If you think you know your password but it's just not working, try changing the case. (Is your Caps Lock on?) Otherwise, request that your password and account name be e-mailed to you. 
+<p>
+Just give us your e-mail address (the one you use for the Web site) and we'll send you information on how to reset your password in a few minutes. 
+<p>
+
+<% if resource.errors[:email].include?('not found') %>
+  <div class="formError">We have no account associated with that e-mail address</div>
+<% elsif resource.errors[:email].any?%>
+  <div class="formError">Please enter a valid e-mail (<%= resource.errors[:email]%>)</div>
+<% elsif resource.errors[:reset_password_token].any?%>
+  <div class="formError">Invalid password reset token. (You have probably already used it and simply must request password reset again.)</div>
+<% elsif resource.errors.any?%>
+    <ul>
+      <% resource.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+<% end %>
+
+<table cellpadding="0" cellspacing="0" border=0 width=500><tr><td>
+
+<fieldset>
+<legend>Password Reset</legend>
+
+  <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
+  
+     <p><%= f.label :email, 'E-mail address:' %> <%= f.text_field :email %></p>
+      <br />
+    	<span class="smalltext">Very important!  If you type this incorrectly, we will not be able to find your account information or 
+    	answer you. If you have multiple e-mail addresses, please be sure to give us the one you used to sign up for the statistics project.</span>
+
+    <p><%= f.submit 'Request Reset Password E-mail' %></p>
+  <% end -%>
+</fieldset>
+</td></tr></table>
+<p>
+

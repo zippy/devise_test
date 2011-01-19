@@ -1,0 +1,8 @@
+<% @title='Home' %>
+<%= stylesheet_link_tag 'home' %>
+
+<% if user_signed_in? %>
+Welcome <%= @current_user.full_name%>
+<% end %>
+<p class="home_title"><a href="<%= logout_url %>" title="End your session">Sign Out</a></p>
+

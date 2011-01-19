@@ -1,0 +1,119 @@
+<% sqlSearchBoxes = current_user_can?(:sqlSearchBoxes)  %>
+<% @title='Accounts' %>
+
+<h3>Account Administration</h3>
+
+<% if current_user_can?(:createAccounts) %>
+  <%= link_to 'Add a new account', new_user_url %>
+<p>
+<% end %>
+<%
+#Get data ready for search form:
+order_choices = [['Name','n'],
+                 ['Account name','a'],
+                 ['Account ID','i'],
+                 ['Type','t']]
+select_options = {
+    'main' => [['Full name contains','m_c'],
+           ['Full name begins with','m_b'],
+           ['Org./practice name contains','o_c'],
+           ['Org./practice name begins with','o_b'],
+           ['Account name contains','a_c'],
+           ['Account name begins with','a_b'],
+           ['E-mail contains','e_c'],
+           ['E-mail begins with','e_b'],
+           ['State/province abbrev. is', 's_is'],
+           ['Notes contain','n_c'],
+           ['Paper code is','p_is'],
+           ['Account ID greater than','i_gt'],
+           ['Show all','all']],
+  'type' => [['Any', nil],
+                ['Midwife','midwife'],
+                ['Practice','practice'],
+                ['Organization','organization'],
+                ['User','user']]  }
+form_pair_info = [{:name => "main", :on => :select, :for => :text_field, :first_focus => true}]
+if sqlSearchBoxes
+    form_pair_info << {:sql => '', :label => 'Manual filters: '}
+end
+form_pair_info << {:name => "type", :on => :hidden, :value => 't_is', :for => :select, :label => 'Type is:  '}%>
+
+<%= form_tag('/users',:method => :get) do %>
+    <%= get_search_form_html(order_choices,form_pair_info,select_options) %>
+<% end %>
+
+<% if !@search_params.empty? %>
+<%= search_results_count(@users,'accounts')%>
+<% end %>
+
+<% for i in @users %>
+<hr>
+
+<% if i.organization? || i.practice? %><B><%= i.oname %></B>,
+<%= i.user_name %>, <%= i.user_type %> &nbsp;  <%= link_to '[edit account]', edit_user_url(:id => i.id) %>
+
+
+<% if current_user_can?(:admin) %> &nbsp;<%= link_to '[sign in as]', login_as_user_url(i.id) %></A> &nbsp;<% if i.organization? %><a href="records/listings/logOrganization?id=<%= i.id %>">[list of data forms]</A><% end %><% end %>
+  <% unless i.activated? %>(<%= i.humanized_activation_status %>)<% end %>
+<br />
+ Contact person: <%= i.full_name(false) %><% end %>
+
+<% unless i.organization? || i.practice? %><B><%= i.full_name(false) %></B>, <%= i.user_name %>, <%= i.user_type %>&nbsp;
+<%= link_to '[edit account]', edit_user_url(:id => i.id) %>
+<% if current_user_can?(:admin) %> &nbsp;<%= link_to '[sign in as]', login_as_user_url(i.id) %><% end %>
+<% unless i.activated? %>(<%= i.humanized_activation_status %>)<% end %>
+
+<% end %>
+
+<% if i.paper_code? %><br />Paper code <%= i.paper_code %><% end %>
+<br />
+<% if i.email? %><%= i.email %>
+<a href="#" onClick="window.open('<%= email_user_url(i.id) %>','email',config='menubar=1,scrollbars=1,height=500,width=675,resizable=1');">[send e-mail]</a>
+/ <% end %><%= i.phone %> <% if i.phone2? %> or <%= i.phone2 %><% end %>
+<br />
+<%if i.address1? %>
+<%= i.address1 %>, <% if i.address2? %><%= i.address2 %>, <% end %><%= i.city %>,  <%= i.state %>  <%= i.zip %>  <%= i.country %>
+<br />
+<% end %>
+
+<!--This section uses a | pipe as the join so that output can be cut and pasted into search boxes for admin use.-->
+<% if current_user_can?(:admin) || current_user_can?(:createAccounts) %>
+  <% if i.midwife? %>
+      <%= link_to 'Links', links_user_url(:id => i.id)%>:
+      <% if i.links.empty? %><i>none</i><% else %>  <%= i.links.sort_by{|m| m.last_name}.collect{|u| u.public_name}.join('|') %> <% end %>
+      <br />
+
+  <% end %>
+  <% if i.practice_or_organization? %>
+      <%= link_to 'Members', memberships_user_url(:id => i.id)%>:
+      <% if i.members.empty? %> <i>none</i> <% else %>  <%= i.members.sort_by{|m| m.last_name}.collect{|u| u.public_name}.join('|') %> <% end %>
+      <br />
+  <% end %>
+  <% if i.midwife? %>
+      <%= link_to 'Memberships', memberships_user_url(:id => i.id)%>:
+      <% if i.organizations.empty? %> <i>none</i> <% else %>  <%= i.organizations.collect{|u| u.oname}.join('|') %> <% end %>
+      <br />
+  <% end %>
+  <% if i.has_priv?(:dataReview)%>
+      <%= link_to 'DRT Queue-Exclusion List', exclusions_user_url(:id => i.id)%>:
+      <% if i.exclusions.empty? %> <i>none</i> <% else %>  <%= i.exclusions.sort_by{|m| m.last_name}.collect{|u| u.public_name}.join('|') %> <% end %>
+      <br/>
+    <% end %>
+  <% perms = (i.get_privs.empty?) ? '<i>none</i>' : i.get_privs.join(", ")
+  if current_user_can?(:assignPrivs) %>
+    <%= link_to 'Privileges:', permissions_user_url(i.id) %>
+  <% else %>
+    <%= 'Privileges:' %>
+  <% end %>
+  <%= perms.html_safe %>
+  <br />
+  <% if i.midwife? || i.practice? %>
+    Data form: <%= i.form %><br />
+    <%if i.module_list.size > 0 %>Modules: <%= i.module_list.join(", ") %><br /><% end %>
+  <% end %>
+<% end %>
+
+<% if i.notes %>Notes: <%= i.notes %><% end %>
+<% end %>
+<%= will_paginate @users if @search_params[:paginate]=='yes' && !@users.empty? %>
+

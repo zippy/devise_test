@@ -1,0 +1,53 @@
+
+<table>
+<tr><td><b>Contact Information:</b><td></tr>
+<tr><td align="left"><%= form.label :first_name,"First Name:"%> </td><td><%= form.text_field :first_name%></td></tr>
+<tr><td align="left"><%= form.label :last_name,"Last Name:"%> </td><td><%= form.text_field :last_name %></td></tr>
+<tr><td align="left"><%= form.label :email,"Email:"%> </td><td><%= form.text_field :email, :size => 60  %></td></tr>
+</table>
+
+<% if current_user_can?(:createAccounts) %>
+	<p>
+	<% if @user.new_record? || @user.deactivated? %>
+	<%= check_box_tag(:activate_account,'1',params[:activate_account]) %>  <%= label_tag :activate_account,"Activate account"%>
+	<% elsif @user.activation_pending? %>
+	An activation e-mail was sent to this user. <br />
+	<%= check_box_tag(:resend_activation,'1',params[:resend_activation]) %>  <%= label_tag :resend_activation,"Resend activation email"%>
+	<%= check_box_tag(:deactivate_account,'1',params[:deactivate_account]) %> <%= label_tag :deactivate_account,"Deactivate account"%>
+	<% else %>
+	<%= check_box_tag(:reset_password,'1',params[:reset_password]) %> <%= label_tag :reset_password,"Reset password"%>
+	<%= check_box_tag(:deactivate_account,'1',params[:deactivate_account]) %> <%= label_tag :deactivate_account,"Deactivate account"%>
+	<% end %>
+	</p>
+<% end %>
+<% if current_user_can?(:admin) %>
+  <div class="float_right form_midwife">
+  <fieldset style=padding:5px><legend><b>Certification Data</b></legend>
+    <p>Became CPM Date: <%= standard_date(@user.became_cpm_date) %></p>
+    <p>Lost CPM Date: <%= standard_date(@user.lost_cpm_date) %></p>
+    <p>NARM update Date: <%= standard_date(@user.narm_update_date) %></p>
+    <p>Became CNM Date: <%= standard_date(@user.became_cnm_date) %></p>
+    <p>Lost CNM Date: <%= standard_date(@user.lost_cnm_date) %></p>
+    <p>AMCB update Date: <%= standard_date(@user.amcb_update_date) %></p>
+</fieldset>
+</div>
+<% end %>
+
+<%= javascript_tag <<"eos"
+function check() {
+	var types = #{User::UserTypes.inspect}
+	types.each(function(the_type) {
+		$$(".form_"+the_type).each(function(item){item.hide()});
+	}
+	);
+	$$(".form_"+$F("user_user_type")).each(function(item){item.show()});
+	if ($F("user_user_type") == 'midwife' || $F("user_user_type") == 'practice' ) {
+		$$(".data_participant").each(function(item){item.show()});
+	}
+	else {
+		$$(".data_participant").each(function(item){item.hide()});
+	}
+}
+check();
+eos
+%>

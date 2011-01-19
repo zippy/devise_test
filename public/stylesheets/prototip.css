@@ -1,0 +1,52 @@
+/* prototip.css : http://www.nickstakenburg.com/projects/prototip */
+.prototip { position: absolute; }
+.prototip .effectWrapper { position: relative; }
+.prototip .tooltip { position: relative; }
+.prototip .toolbar {
+	position: relative;
+	display: block;
+	}
+.prototip .toolbar .title {
+	display: block;
+	position: relative;
+	}
+.prototip .content { clear: both; }
+.prototip .toolbar a.close {
+	position: relative;
+	text-decoration: none;
+	float: right;
+	width: 15px;
+	height: 15px;
+	background: transparent url(close.png);
+	display: block;
+	line-height: 0;
+	font-size: 0px;
+	border: 0;
+	}
+.prototip .toolbar a.close:hover { background: transparent url(close_hover.png); }
+
+.iframeShim { 
+	position: absolute;
+	border: 0;
+	margin: 0;	
+    padding: 0;
+    background: none;
+}
+/* Tooltip styles */
+/* used in 3.0 form */
+.prototip .default { width: 150px; color: #000066;}
+.prototip .default .toolbar { background: #0F6788; font: italic 17px Georgia, serif; }
+.prototip .default .title { padding: 5px; }
+.prototip .default .content { background: #A399FF; font: 12px Verdana,Arial,sans-serif; padding: 5px; border: 1px solid #4C3366;}
+
+/* used in 2.0 form */
+.W20 .prototip  .default { width: 500px; border: 2px solid #3399FF;}
+.W20 .prototip  .default .toolbar { background: #96b8e2 url(classic_toolbar.gif) top left repeat-y; font-weight: bold; color: #fff;}
+.W20 .prototip  .default .toolbar a.close:hover { background: url(close_hover_red.gif);}
+.W20 .prototip  .default .content { background: #99CCFF; color: #000066; font: 12px Arial, Helvetica, sans-serif; padding: 3px; }
+
+.prototip  .narrow { width: 120px; border: 1px solid #000066;}
+.prototip  .narrow .toolbar { background: #99CCFF url(classic_toolbar.gif) top left repeat-y; font-weight: bold; color: #fff;}
+.prototip .narrow .toolbar a.close { background: url(../images/prototip/styles/narrow/close.png);}
+.prototip  .narrow .toolbar a.close:hover { background: url(../images/prototip/styles/narrow/close_hover.png);}
+.prototip  .narrow .content { background: #99CCFF; color: #000066; font: 12px Arial, Helvetica, sans-serif; padding: 3px; }
